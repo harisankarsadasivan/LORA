@@ -1,4 +1,5 @@
-readme file
+Download your own local copy of datasets
 Dataset download link for ecoli:
 wget https://zenodo.org/record/1172816/files/Loman_E.coli_MAP006-1_2D_50x.fasta
 Reference genome download link:
+wget ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/005/845/GCF_000005845.2_ASM584v2/GCF_000005845.2_ASM584v2_genomic.fna.gz
