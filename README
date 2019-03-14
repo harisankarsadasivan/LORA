@@ -1,1 +1,4 @@
 readme file
+Dataset download link for ecoli:
+wget https://zenodo.org/record/1172816/files/Loman_E.coli_MAP006-1_2D_50x.fasta
+Reference genome download link:
