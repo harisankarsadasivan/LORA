@@ -16,7 +16,7 @@ def plot_2d(e1, e2):
     plt.ylabel('1-dimension')
     plt.show()
 
-# Plotting functionality for 2d embeddings
+# Plotting functionality for 3d embeddings
 def plot_3d(e1, e2):
     x1 = e1[:,0]
     y1 = e1[:,1]
@@ -40,7 +40,7 @@ def plot_embeddings(e1, e2):
     n1 = e1.shape[0]
     n2 = e2.shape[0]
     if (n1 + n2 > 100):
-        print("Warning: plotting", n1+n2, "data points")
+        print("Warning: plotting large number (", n1+n2, ") of data points")
     assert(e1.shape[1] == e2.shape[1])
     d = e2.shape[1]
     assert(d == 2 or d == 3)
@@ -80,26 +80,52 @@ def normalize_embeddings(e1, e2, mode='all'):
         return normalize_ind(e1, e2)
     return None
 
-# Generate histogram for embedding e at a particular level
-def get_histogram(e, level):
-    return np.zeros(10)
+# Generate binning of embedding e along dimension dim at a particular level
+# MEMORY: requires numpy array of length 2^level
+def get_binnings(e, dim, level):
+    n_nodes, n_dims = e.shape
+    assert(dim < n_dims)
+    n_bins = 2**level
+    return np.histogram(e[:, dim], n_bins, range=(0,1))[0]
+
+# Return histogram intersection of 2 numpy arrays representing histograms
+def hist_intersect(h1, h2):
+    return np.sum(np.minimum(h1, h2))
+
+# Compute I(H_g1^l, H_g2^l) from embeddings
+# MEMORY: requires 2 numpy arrays of length 2^level
+def compute_hist_intersect(e1, e2, level):
+    assert(e1.shape[1] == e2.shape[1])
+    n_dims = e1.shape[1]
+    hist_int = 0
+    for dim in range(n_dims):
+        h1 = get_binnings(e1, dim, level)
+        h2 = get_binnings(e2, dim, level)
+        hist_int += hist_intersect(h1, h2)
+    return hist_int
 
 # Compute similarity according to pyramid match graph kernel
-# Labels optional
-def pyramid_match_sim(e1, e2, num_levels, labels=None):
+def pyramid_match_sim(e1, e2, L):
 
     # Put embeddings in unit hypercube
     e1, e2 = normalize_embeddings(e1, e2)
 
+    # Begin with level L
+    hist_int = compute_hist_intersect(e1, e2, L)
+    sim = hist_int
+    next_hist_int = hist_int
+
     # Loop over levels from small cells to large
-    for level in reversed(list(range(num_levels))): # Loop from level L to 0
-        h1 = get_histogram(e1, level)
-        h2 = get_histogram(e2, level)
+    for level in reversed(list(range(L))): # Loop from level L-1 to 0
+        weight = 1 / (2**(L - level))
+        hist_int = compute_hist_intersect(e1, e2, level)
+        sim += weight * (hist_int - next_hist_int)
+        next_hist_int = hist_int
 
-    return 0
+    return sim
 
-# Simple 2d test case
-def test_2d():
+# Example of 2D plotting for different embedding normalizations
+def test_2d_plot():
     e1 = np.array([[5, -2], [10, 3]])
     e2 = np.array([[6, 0], [-1, -5], [0, 0]])
     plot_embeddings(e1, e2)
@@ -108,8 +134,8 @@ def test_2d():
     e1_norm, e2_norm = normalize_embeddings(e1, e2, mode='ind')
     plot_embeddings(e1_norm, e2_norm)
 
-# Simple 3d test case
-def test_3d():
+# Example of 3D plotting for different embedding normalizations
+def test_3d_plot():
     e1 = np.array([[5, -2, 0], [10, 3, -1]])
     e2 = np.array([[6, 0, -1], [-1, -5, 9], [0, 0, 0]])
     plot_embeddings(e1, e2)
@@ -118,5 +144,15 @@ def test_3d():
     e1_norm, e2_norm = normalize_embeddings(e1, e2, mode='ind')
     plot_embeddings(e1_norm, e2_norm)
 
-# test_2d()
-test_3d()
+# Test case with solutions worked out by hand (same embeddings as 2d plot example)
+def test_2d_sim():
+    e1 = np.array([[5, -2], [10, 3]])
+    e2 = np.array([[6, 0], [-1, -5], [0, 0]])
+    assert(pyramid_match_sim(e1, e2, 2) == 2.5)
+    assert(pyramid_match_sim(e1, e2, 1) == 3)
+    assert(pyramid_match_sim(e1, e2, 0) == 4)
+    print("Success!")
+
+# test_2d_plot()
+# test_3d_plot()
+test_2d_sim()
