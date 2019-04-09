@@ -155,4 +155,4 @@ def test_2d_sim():
 
 # test_2d_plot()
 # test_3d_plot()
-test_2d_sim()
+# test_2d_sim()
