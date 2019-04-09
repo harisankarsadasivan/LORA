@@ -95,7 +95,7 @@ def hist_intersect(h1, h2):
 # Compute I(H_g1^l, H_g2^l) from embeddings
 # MEMORY: requires 2 numpy arrays of length 2^level
 def compute_hist_intersect(e1, e2, level):
-    assert(e1.shape[1] == e2.shape[1])
+    assert e1.shape[1] == e2.shape[1], 'Graph embeddings have different dimensionality'
     n_dims = e1.shape[1]
     hist_int = 0
     for dim in range(n_dims):
@@ -105,7 +105,13 @@ def compute_hist_intersect(e1, e2, level):
     return hist_int
 
 # Compute similarity according to pyramid match graph kernel
-def pyramid_match_sim(e1, e2, L):
+def pyramid_match_sim(e1, e2, L, regularize=False):
+
+    # Check shapes
+    n_nodes1 = e1.shape[0]
+    assert n_nodes1 > 0, 'Graph 1 empty'
+    n_nodes2 = e2.shape[0]
+    assert n_nodes2 > 0, 'Graph 2 empty'
 
     # Put embeddings in unit hypercube
     e1, e2 = normalize_embeddings(e1, e2)
@@ -121,6 +127,11 @@ def pyramid_match_sim(e1, e2, L):
         hist_int = compute_hist_intersect(e1, e2, level)
         sim += weight * (hist_int - next_hist_int)
         next_hist_int = hist_int
+
+    # Option to regularize s.t. score is in interval (0,1]
+    # NOTE: sim will never be zero (unless empty graph) b/c first level is entire hypercube
+    if regularize:
+        sim /= (n_nodes1 + n_nodes2)
 
     return sim
 
@@ -148,10 +159,10 @@ def test_3d_plot():
 def test_2d_sim():
     e1 = np.array([[5, -2], [10, 3]])
     e2 = np.array([[6, 0], [-1, -5], [0, 0]])
-    assert(pyramid_match_sim(e1, e2, 2) == 2.5)
-    assert(pyramid_match_sim(e1, e2, 1) == 3)
-    assert(pyramid_match_sim(e1, e2, 0) == 4)
-    print("Success!")
+    assert pyramid_match_sim(e1, e2, 2) == 2.5, 'test_2d_sim, L=2'
+    assert pyramid_match_sim(e1, e2, 1) == 3, 'test_2d_sim, L=1'
+    assert pyramid_match_sim(e1, e2, 0) == 4, 'test_2d_sim, L=0'
+    print("Success: test_2d_sim, L=0,1,2")
 
 # test_2d_plot()
 # test_3d_plot()
