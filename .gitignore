@@ -4,4 +4,6 @@ struc2vec/pickles/*.*
 .idea
 */__pycache__/
 */struc2vec.log
-
+.vscode
+repeat_graph_dump
+__pycache__
