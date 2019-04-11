@@ -4,13 +4,6 @@ import matplotlib.pyplot as plt
 import numba as nb
 import time
 
-'''
-TODO:
-    - Weight similarity along particular dimensions st concatenation of 1000 dim emb and 10 dim emb can have equal influence
-    - Weight normalization
-    - Try to vectorize, run timing and memory observations
-'''
-
 # Plotting functionality for 2d embeddings
 def plot_2d(e1, e2):
     x1 = e1[:,0]
@@ -102,34 +95,39 @@ def hist_intersect(h1, h2):
     return np.sum(np.minimum(h1, h2))
 
 # Compute I(H_g1^l, H_g2^l) from embeddings
+# Added option to weight each dimension individually using numpy array of coefficient multipliers
 # MEMORY: requires 2 numpy arrays of length 2^level
-def compute_hist_intersect(e1, e2, level):
+def compute_hist_intersect(e1, e2, level, dim_weighting=None):
     assert e1.shape[1] == e2.shape[1], 'Graph embeddings have different dimensionality'
     n_dims = e1.shape[1]
     hist_int = 0
+    if dim_weighting is None:
+        dim_weighting = np.ones(n_dims)
     for dim in range(n_dims):
         h1 = get_binnings(e1, dim, level)
         h2 = get_binnings(e2, dim, level)
-        hist_int += hist_intersect(h1, h2)
+        hist_int += dim_weighting[dim] * hist_intersect(h1, h2)
     return hist_int
 
 # Exactly the same as compute_hist_intersect, but vectorized using numba. Requires bare numpy, no function calls
 # MEMORY: requires 2 numpy arrays of length 2^level
 @nb.njit
-def compute_hist_intersect_vectorized(e1, e2, level):
+def compute_hist_intersect_vectorized(e1, e2, level, dim_weighting=None):
     assert e1.shape[1] == e2.shape[1], 'Graph embeddings have different dimensionality'
     n_dims = e1.shape[1]
     n_bins = 2**level
     hist_int = 0
+    if dim_weighting is None:
+        dim_weighting = np.ones(n_dims)
     for dim in range(n_dims):
         h1 = np.histogram(e1[:, dim], n_bins, range=(0,1))[0]
         h2 = np.histogram(e2[:, dim], n_bins, range=(0,1))[0]
-        hist_int += np.sum(np.minimum(h1, h2))
+        hist_int += dim_weighting[dim] * np.sum(np.minimum(h1, h2))
     return hist_int
 
 # Compute similarity according to pyramid match graph kernel
 # Time: O(n*d*L)
-def pyramid_match_sim(e1, e2, L, regularize=False, vectorized=True):
+def pyramid_match_sim(e1, e2, L, regularize=False, vectorized=True, dim_weighting=None):
 
     # Check shapes
     n_nodes1 = e1.shape[0]
@@ -142,9 +140,9 @@ def pyramid_match_sim(e1, e2, L, regularize=False, vectorized=True):
 
     # Begin with level L
     if vectorized:
-        hist_int = compute_hist_intersect_vectorized(e1, e2, L)
+        hist_int = compute_hist_intersect_vectorized(e1, e2, L, dim_weighting=dim_weighting)
     else:
-        hist_int = compute_hist_intersect(e1, e2, L)
+        hist_int = compute_hist_intersect(e1, e2, L, dim_weighting=dim_weighting)
     sim = hist_int
     next_hist_int = hist_int
 
@@ -152,9 +150,9 @@ def pyramid_match_sim(e1, e2, L, regularize=False, vectorized=True):
     for level in reversed(list(range(L))): # Loop from level L-1 to 0
         weight = 1 / (2**(L - level))
         if vectorized:
-            hist_int = compute_hist_intersect_vectorized(e1, e2, level)
+            hist_int = compute_hist_intersect_vectorized(e1, e2, level, dim_weighting=dim_weighting)
         else:
-            hist_int = compute_hist_intersect(e1, e2, level)
+            hist_int = compute_hist_intersect(e1, e2, level, dim_weighting=dim_weighting)
         sim += weight * (hist_int - next_hist_int)
         next_hist_int = hist_int
 
@@ -204,8 +202,8 @@ def test_2d_sim():
 
 # Demonstrate runtimes and linear scaling with n and d
 def test_scaling():
-    for n in [10**1, 10**2, 10**3]:
-        for d in [10**2, 10**3, 10**4]:
+    for n in [10**2]:
+        for d in [10**1, 10**2, 10**3, 10**4, 10**5]:
             e1 = np.random.rand(n, d)
             e2 = np.random.rand(n, d)
             start = time.time()
