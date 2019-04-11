@@ -1,6 +1,15 @@
 import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
+import numba as nb
+import time
+
+'''
+TODO:
+    - Weight similarity along particular dimensions st concatenation of 1000 dim emb and 10 dim emb can have equal influence
+    - Weight normalization
+    - Try to vectorize, run timing and memory observations
+'''
 
 # Plotting functionality for 2d embeddings
 def plot_2d(e1, e2):
@@ -104,8 +113,23 @@ def compute_hist_intersect(e1, e2, level):
         hist_int += hist_intersect(h1, h2)
     return hist_int
 
+# Exactly the same as compute_hist_intersect, but vectorized using numba. Requires bare numpy, no function calls
+# MEMORY: requires 2 numpy arrays of length 2^level
+@nb.njit
+def compute_hist_intersect_vectorized(e1, e2, level):
+    assert e1.shape[1] == e2.shape[1], 'Graph embeddings have different dimensionality'
+    n_dims = e1.shape[1]
+    n_bins = 2**level
+    hist_int = 0
+    for dim in range(n_dims):
+        h1 = np.histogram(e1[:, dim], n_bins, range=(0,1))[0]
+        h2 = np.histogram(e2[:, dim], n_bins, range=(0,1))[0]
+        hist_int += np.sum(np.minimum(h1, h2))
+    return hist_int
+
 # Compute similarity according to pyramid match graph kernel
-def pyramid_match_sim(e1, e2, L, regularize=False):
+# Time: O(n*d*L)
+def pyramid_match_sim(e1, e2, L, regularize=False, vectorized=True):
 
     # Check shapes
     n_nodes1 = e1.shape[0]
@@ -117,14 +141,20 @@ def pyramid_match_sim(e1, e2, L, regularize=False):
     e1, e2 = normalize_embeddings(e1, e2)
 
     # Begin with level L
-    hist_int = compute_hist_intersect(e1, e2, L)
+    if vectorized:
+        hist_int = compute_hist_intersect_vectorized(e1, e2, L)
+    else:
+        hist_int = compute_hist_intersect(e1, e2, L)
     sim = hist_int
     next_hist_int = hist_int
 
     # Loop over levels from small cells to large
     for level in reversed(list(range(L))): # Loop from level L-1 to 0
         weight = 1 / (2**(L - level))
-        hist_int = compute_hist_intersect(e1, e2, level)
+        if vectorized:
+            hist_int = compute_hist_intersect_vectorized(e1, e2, level)
+        else:
+            hist_int = compute_hist_intersect(e1, e2, level)
         sim += weight * (hist_int - next_hist_int)
         next_hist_int = hist_int
 
@@ -159,11 +189,31 @@ def test_3d_plot():
 def test_2d_sim():
     e1 = np.array([[5, -2], [10, 3]])
     e2 = np.array([[6, 0], [-1, -5], [0, 0]])
-    assert pyramid_match_sim(e1, e2, 2) == 2.5, 'test_2d_sim, L=2'
-    assert pyramid_match_sim(e1, e2, 1) == 3, 'test_2d_sim, L=1'
-    assert pyramid_match_sim(e1, e2, 0) == 4, 'test_2d_sim, L=0'
+
+    # Python:
+    assert pyramid_match_sim(e1, e2, 2, vectorized=False) == 2.5, 'test_2d_sim, L=2'
+    assert pyramid_match_sim(e1, e2, 1, vectorized=False) == 3, 'test_2d_sim, L=1'
+    assert pyramid_match_sim(e1, e2, 0, vectorized=False) == 4, 'test_2d_sim, L=0'
     print("Success: test_2d_sim, L=0,1,2")
+
+    # Vectorized (numba)
+    assert pyramid_match_sim(e1, e2, 2, vectorized=True) == 2.5, 'test_2d_sim, L=2'
+    assert pyramid_match_sim(e1, e2, 1, vectorized=True) == 3, 'test_2d_sim, L=1'
+    assert pyramid_match_sim(e1, e2, 0, vectorized=True) == 4, 'test_2d_sim, L=0'
+    print("Success: test_2d_sim vectorized, L=0,1,2")
+
+# Demonstrate runtimes and linear scaling with n and d
+def test_scaling():
+    for n in [10**1, 10**2, 10**3]:
+        for d in [10**2, 10**3, 10**4]:
+            e1 = np.random.rand(n, d)
+            e2 = np.random.rand(n, d)
+            start = time.time()
+            sim = pyramid_match_sim(e1, e2, 10, regularize=True)
+            t = time.time() - start
+            print('(n = ' + str(n) + ', d = ' + str(d) + '): ' + str(t))
 
 # test_2d_plot()
 # test_3d_plot()
 # test_2d_sim()
+test_scaling()
