@@ -1,4 +1,5 @@
 from embedding.generate_embeddings import generate_embeddings
+import numpy as np
 import os
 
 data_location = 'data/flye_output/'
@@ -6,7 +7,7 @@ edge_list_location = '/20-repeat/edge_list'
 content_list_location = '/20-repeat/node_list'
 
 bacteria = os.listdir(data_location)
-
+limit = 3 #np.inf # For debugging purposes
 genomes = []
 
 for genome in bacteria:
@@ -47,10 +48,14 @@ for genome in bacteria:
     genomes.append((genome, edge_list, contigs, repeats))
     print("Read files for " + genome)
 
+    if (len(genomes) >= limit):
+        break
+
 embeddings = []
 
 for genome, edges, contigs, repeats in genomes:
     print('Generating embeddings for ' + genome)
-    embeddings.append(generate_embeddings(edges, contigs, repeats, 'node2vec', 'dna2vec'))
+    emb = generate_embeddings(edges, contigs, repeats, 'node2vec', 'dna2vec')
+    embeddings.append((genome, emb, None)) # Name, embeddings, weight vector (optional)
     print('Done')
 
