@@ -1,6 +1,6 @@
 import numpy as np
 import scipy.cluster.hierarchy as hier
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 import sys
 sys.path.append('graph_kernel/')
@@ -43,6 +43,11 @@ def get_pairwise_dist(embeddings, L, regularize=True, condensed=True):
     else: # Sim is in range (0,inf]
         return -1 * get_pairwise_sim(embeddings, L, regularize=regularize, condensed=condensed)
 
+# Wrapper which returns linkage structure of dendrogram
+# Linkage is a string specifying the linkage method (e.g. single, complete, average, centroid, etc.)
+def build_dendrogram(pairwise_dist, linkage):
+    return hier.linkage(pairwise_dist, method=linkage, metric=None)
+
 # Test case to create and visualize dendrogram
 def test_dendrogram():
     e1 = np.array([[5, -2], [10, 3]])
@@ -52,24 +57,25 @@ def test_dendrogram():
     embeddings = [e1, e2, e3, e4]
 
     pairwise_dist = get_pairwise_dist(embeddings, 3)
-    single_link = hier.linkage(pairwise_dist, method='single', metric=None)
-    complete_link = hier.linkage(pairwise_dist, method='complete', metric=None)
-    average_link = hier.linkage(pairwise_dist, method='average', metric=None)
-    centroid_link = hier.linkage(pairwise_dist, method='centroid', metric=None)
-    plt.figure()
-    plt.subplot(2,2,1)
-    dn = hier.dendrogram(single_link)
-    plt.title('Single Link')
-    plt.subplot(2,2,2)
-    dn = hier.dendrogram(complete_link)
-    plt.title('Complete Link')
-    plt.subplot(2,2,3)
-    dn = hier.dendrogram(average_link)
-    plt.title('Average Link')
-    plt.subplot(2,2,4)
-    dn = hier.dendrogram(centroid_link)
-    plt.title('Centroid Link')
-    plt.show()
+    single_link = build_dendrogram(pairwise_dist, 'single')
+    print(type(single_link))
+    # complete_link = build_dendrogram(pairwise_dist, 'complete')
+    # average_link = build_dendrogram(pairwise_dist, 'average')
+    # centroid_link = build_dendrogram(pairwise_dist, 'centroid')
+    # plt.figure()
+    # plt.subplot(2,2,1)
+    # dn = hier.dendrogram(single_link)
+    # plt.title('Single Link')
+    # plt.subplot(2,2,2)
+    # dn = hier.dendrogram(complete_link)
+    # plt.title('Complete Link')
+    # plt.subplot(2,2,3)
+    # dn = hier.dendrogram(average_link)
+    # plt.title('Average Link')
+    # plt.subplot(2,2,4)
+    # dn = hier.dendrogram(centroid_link)
+    # plt.title('Centroid Link')
+    # plt.show()
 
 
 # Test case to show that condensed matrix representation matches what scipy creates/expects
@@ -92,5 +98,5 @@ def test_condensed_mat():
     assert np.allclose(sqf_dist, mat_dist), 'test_condensed_mat(): distance'
     print('Success: test_condensed_mat() distance')
 
-test_dendrogram()
+# test_dendrogram()
 # test_condensed_mat()

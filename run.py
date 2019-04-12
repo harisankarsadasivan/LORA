@@ -1,4 +1,5 @@
 from embedding.generate_embeddings import generate_embeddings
+from phylo_tree.construct_dendrogram import get_pairwise_dist, build_dendrogram
 import os
 import numpy as np
 
@@ -6,6 +7,7 @@ data_location = 'data/flye_output/'
 edge_list_location = '/20-repeat/edge_list'
 content_list_location = '/20-repeat/node_list'
 embedding_location = '/20-repeat/saved_embeddings.npy'
+distance_mat_location = 'data/distance_mat.npy'
 
 bacteria = os.listdir(data_location)
 limit = 30 #np.inf # For debugging purposes
@@ -54,12 +56,22 @@ for genome in bacteria:
         embeddings.append((genome, np.load(data_location + genome + embedding_location)))
         print("Loaded embeddings for " + genome)
 
+emb_list = []
 for genome, edges, contigs, repeats in genomes:
     if len(genomes) >= limit:
         break
     print('Generating embeddings for ' + genome)
     emb = generate_embeddings(edges, contigs, repeats, 'node2vec', 'dna2vec')
+    emb_list.append(emb)
     embeddings.append((genome, emb, None)) # Name, embeddings, weight vector (optional)
     np.save(data_location + genome + embedding_location, emb)
     print('Done')
-
+    
+if not os.path.isfile(distance_mat_location):
+    print('Calculating all pairwise distances')
+    pairwise_dist = get_pairwise_dist(emb_list, 8)
+    np.save(distance_mat_location, pairwise_dist)
+else:
+    print('Loading pairwise distances')
+    pairwise_dist = np.load(distance_mat_location)
+print('Done')

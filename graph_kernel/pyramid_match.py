@@ -214,4 +214,4 @@ def test_scaling():
 # test_2d_plot()
 # test_3d_plot()
 # test_2d_sim()
-test_scaling()
+# test_scaling()
