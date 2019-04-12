@@ -98,5 +98,5 @@ def test_condensed_mat():
     assert np.allclose(sqf_dist, mat_dist), 'test_condensed_mat(): distance'
     print('Success: test_condensed_mat() distance')
 
-test_dendrogram()
+# test_dendrogram()
 # test_condensed_mat()
