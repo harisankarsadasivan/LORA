@@ -63,10 +63,33 @@ def extract_info(edges, seq):
 			repeat = 1  # no repeat by default
 
 		seqs = seq[abs(idx)][0]  # actual sequence
+		# check if it is reversed
+		if reverse == True:
+			seqs = reverse_sequence(seqs)
+
 		data = {'reverse': reverse, 'cover': cover, 'repeat': repeat, 'length': len(seqs), 'seq': seqs}
 		node_data[(src, dst)].append(data)
 
 	return node_data
+
+
+def reverse_sequence(seq):
+	'''
+	Reverse and complement the DNA string
+	Input:
+		- seqeunce
+	Return:
+		- reversed and complemented sequence
+	'''
+	complement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A'}
+	# reverse the sequence
+	seq = seq[::-1]
+	# complement the sequence
+	rc_seq = ''
+	for c in seq:
+		rc_seq += complement[c]
+
+	return rc_seq
 
 
 def embed_nodes(graph, attrs):
