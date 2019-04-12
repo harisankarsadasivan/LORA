@@ -1,0 +1,32 @@
+digraph {
+nodesep = 0.5;
+node [shape = circle, label = "", height = 0.3];
+"0" [style = "filled", fillcolor = "grey"];
+"1" [style = "filled", fillcolor = "grey"];
+"3" -> "2" [label = "id -16\l5k 49x", color = "black"] ;
+"5" -> "4" [label = "id 14\l5k 50x", color = "black"] ;
+"7" -> "6" [label = "id -12\l6k 49x", color = "black"] ;
+"2" -> "5" [label = "id -4\l296k 49x", color = "black"] ;
+"9" -> "8" [label = "id -15\l15k 50x", color = "black"] ;
+"11" -> "10" [label = "id 12\l6k 49x", color = "black"] ;
+"13" -> "12" [label = "id -14\l5k 50x", color = "black"] ;
+"14" -> "11" [label = "id 8\l2153k 50x", color = "black"] ;
+"8" -> "15" [label = "id -3\l57k 48x", color = "black"] ;
+"0" -> "7" [label = "id -2\l1005k 49x", color = "black"] ;
+"17" -> "16" [label = "id -11\l14k 25x", color = "red" , penwidth = 3] ;
+"15" -> "18" [label = "id 13\l10k 51x", color = "black"] ;
+"18" -> "19" [label = "id 9\l53k 54x", color = "black"] ;
+"10" -> "1" [label = "id 2\l1005k 49x", color = "black"] ;
+"4" -> "9" [label = "id -6\l444k 52x", color = "black"] ;
+"21" -> "20" [label = "id 15\l15k 50x", color = "black"] ;
+"20" -> "13" [label = "id 6\l444k 52x", color = "black"] ;
+"12" -> "22" [label = "id 4\l296k 49x", color = "black"] ;
+"24" -> "23" [label = "id -13\l10k 51x", color = "black"] ;
+"6" -> "3" [label = "id -8\l2153k 50x", color = "black"] ;
+"17" -> "24" [label = "id -9\l53k 54x", color = "black"] ;
+"22" -> "14" [label = "id 16\l5k 49x", color = "black"] ;
+"25" -> "19" [label = "id 11\l14k 25x", color = "red" , penwidth = 3] ;
+"23" -> "21" [label = "id 3\l57k 48x", color = "black"] ;
+"19" -> "25" [label = "id 10\l5k 45x", color = "red" , penwidth = 3] ;
+"16" -> "17" [label = "id -10\l5k 45x", color = "red" , penwidth = 3] ;
+}
