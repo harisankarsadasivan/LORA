@@ -219,6 +219,14 @@ def load_edgelist(file_, undirected=True):
   return G
 
 
+def load_edgelist_local(edges):
+  G = Graph()
+  for start, end in edges:
+    G[start].append(end)
+
+  G.make_consistent()
+  return G
+
 def load_matfile(file_, variable_name="network", undirected=True):
   mat_varables = loadmat(file_)
   mat_matrix = mat_varables[variable_name]

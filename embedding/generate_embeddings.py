@@ -1,18 +1,20 @@
 import networkx as nx
-import subprocess
-import random
 from .biovec import models
 from .dna2vec.multi_k_model import MultiKModel
+from node2vec import node2vec
+from struc2vec.src import struc2vec, graph
+from gensim.models import Word2Vec
+from gensim.models.word2vec import LineSentence
 import numpy as np
 
 _2vec_params = {'p': 1,
                    'q': 1,
                    'num_walks': 10,
                    'walk_len': 80,
-                   'dimensions ': 128,
+                   'dimensions': 128,
                    'window_size': 10,
                    'workers': 8,
-                   'iter' :1}
+                   'iter': 1}
 
 biovec_model_path = 'embedding/biovec/streptomyces_avermitillis.model'
 dna2vec_model_path = 'embedding/dna2vec/pretrained/dna2vec-20161219-0153-k3to8-100d-10c-29320Mbp-sliding-Xat.w2v'
@@ -34,31 +36,40 @@ def generate_embeddings(edge_list, contigs, repeats, struct_embedding_type, cont
     # print(final_embeds.shape)
 
 def generate_structural_embeddings(edge_list, embed_type, dimensions):
-    with open('embed_input.txt', 'w') as input:
-        for start, end in edge_list:
-            input.write(str(start) + " " + str(end) + "\n")
-
     if embed_type == 'node2vec':
-        command = node2vec_command.split()
+        G = nx.DiGraph()
+        for start, end in edge_list:
+            G.add_edge(start, end)
+        for edge in G.edges():
+            G[edge[0]][edge[1]]['weight'] = 1
+
+        G = node2vec.Graph(G, True, _2vec_params['p'], _2vec_params['q'])
+        G.preprocess_transition_probs()
+        walks = G.simulate_walks(_2vec_params['num_walks'], _2vec_params['walk_len'])
+        walks = [map(str, walk) for walk in walks]
+        model = Word2Vec(walks, size=dimensions, window=_2vec_params['window_size'],
+                         min_count=0, sg=1, workers=_2vec_params['workers'], iter=_2vec_params['iter'])
 
     elif embed_type == 'struc2vec':
-        command = struc2vec_command.split()
+        G = graph.load_edgelist_local(edge_list)
+        G = struc2vec.Graph(G, True, _2vec_params['workers'], untilLayer=None)
+        G.preprocess_neighbors_with_bfs()
+        G.calc_distances_all_vertices(compactDegree=False)
+        G.create_distances_network()
+        G.preprocess_parameters_random_walk()
 
-    command.append(str(dimensions))
-    process = subprocess.Popen(command, stdout=subprocess.PIPE)
-    process.communicate()
-    with open('embed_output.emb') as output:
-        line = output.readline().split()
-        n = int(line[0])
-        d = int(line[1])
-        structure =  {}
-        for i in range(n):
-            line = output.readline()
-            indv_embed = line.split()
-            embedding = np.zeros((d,))
-            for j in range(1,d+1):
-                embedding[j-1] = indv_embed[j]
-            structure[int(indv_embed[0])] = embedding
+        G.simulate_walks(_2vec_params['num_walks'], _2vec_params['walk_len'])
+
+        walks = LineSentence('random_walks.txt')
+        model = Word2Vec(walks, size=dimensions, window=_2vec_params['window_size'], min_count=0, hs=1, sg=1,
+                         workers=_2vec_params['workers'], iter=_2vec_params['iter'])
+
+    vocab, vectors = model.wv.vocab, model.wv.vectors
+    structure = {}
+    for word, vocab_ in sorted(vocab.items(), key=lambda item: -item[1].count):
+        row = vectors[vocab_.index]
+        structure[int(word)] = row
+
     return structure
 
 

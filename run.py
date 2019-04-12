@@ -8,7 +8,7 @@ content_list_location = '/20-repeat/node_list'
 embedding_location = '/20-repeat/saved_embeddings.npy'
 
 bacteria = os.listdir(data_location)
-limit = 3 #np.inf # For debugging purposes
+limit = 30 #np.inf # For debugging purposes
 genomes = []
 embeddings = []
 
@@ -55,11 +55,11 @@ for genome in bacteria:
         print("Loaded embeddings for " + genome)
 
 for genome, edges, contigs, repeats in genomes:
+    if len(genomes) >= limit:
+        break
     print('Generating embeddings for ' + genome)
     emb = generate_embeddings(edges, contigs, repeats, 'node2vec', 'dna2vec')
     embeddings.append((genome, emb, None)) # Name, embeddings, weight vector (optional)
     np.save(data_location + genome + embedding_location, emb)
     print('Done')
-    if len(genomes) >= limit:
-        break
 
