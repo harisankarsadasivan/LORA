@@ -1,4 +1,5 @@
 *.emb
+*.pyc
 random_walks.txt
 struc2vec/pickles/*.*
 .idea
@@ -7,3 +8,4 @@ struc2vec/pickles/*.*
 .vscode
 repeat_graph_dump
 __pycache__
+virtual_env/*
