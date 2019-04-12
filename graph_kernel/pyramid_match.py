@@ -1,55 +1,55 @@
 import numpy as np
-from mpl_toolkits.mplot3d import Axes3D
-import matplotlib.pyplot as plt
+# from mpl_toolkits.mplot3d import Axes3D
+# import matplotlib.pyplot as plt
 import numba as nb
 import time
 
-# Plotting functionality for 2d embeddings
-def plot_2d(e1, e2):
-    x1 = e1[:,0]
-    y1 = e1[:,1]
-    x2 = e2[:,0]
-    y2 = e2[:,1]
-    plt.scatter(x1, y1, c='blue', label='e1')
-    plt.scatter(x2, y2, c='red', label='e2')
-    plt.legend(loc='best')
-    plt.title('Graph Embeddings')
-    plt.xlabel('0-dimension')
-    plt.ylabel('1-dimension')
-    plt.show()
+# # Plotting functionality for 2d embeddings
+# def plot_2d(e1, e2):
+#     x1 = e1[:,0]
+#     y1 = e1[:,1]
+#     x2 = e2[:,0]
+#     y2 = e2[:,1]
+#     plt.scatter(x1, y1, c='blue', label='e1')
+#     plt.scatter(x2, y2, c='red', label='e2')
+#     plt.legend(loc='best')
+#     plt.title('Graph Embeddings')
+#     plt.xlabel('0-dimension')
+#     plt.ylabel('1-dimension')
+#     plt.show()
 
-# Plotting functionality for 3d embeddings
-def plot_3d(e1, e2):
-    x1 = e1[:,0]
-    y1 = e1[:,1]
-    z1 = e1[:,2]
-    x2 = e2[:,0]
-    y2 = e2[:,1]
-    z2 = e2[:,2]
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
-    ax.scatter(x1, y1, z1, c='blue', label='e1')
-    ax.scatter(x2, y2, z2, c='red', label='e2')
-    ax.legend(loc='best')
-    ax.set_title('Graph Embeddings')
-    ax.set_xlabel('0-dimension')
-    ax.set_ylabel('1-dimension')
-    ax.set_zlabel('2-dimension')
-    plt.show()
+# # Plotting functionality for 3d embeddings
+# def plot_3d(e1, e2):
+#     x1 = e1[:,0]
+#     y1 = e1[:,1]
+#     z1 = e1[:,2]
+#     x2 = e2[:,0]
+#     y2 = e2[:,1]
+#     z2 = e2[:,2]
+#     fig = plt.figure()
+#     ax = fig.add_subplot(111, projection='3d')
+#     ax.scatter(x1, y1, z1, c='blue', label='e1')
+#     ax.scatter(x2, y2, z2, c='red', label='e2')
+#     ax.legend(loc='best')
+#     ax.set_title('Graph Embeddings')
+#     ax.set_xlabel('0-dimension')
+#     ax.set_ylabel('1-dimension')
+#     ax.set_zlabel('2-dimension')
+#     plt.show()
 
-# Visualize 2d or 3d node embeddings
-def plot_embeddings(e1, e2):
-    n1 = e1.shape[0]
-    n2 = e2.shape[0]
-    if (n1 + n2 > 100):
-        print("Warning: plotting large number (", n1+n2, ") of data points")
-    assert(e1.shape[1] == e2.shape[1])
-    d = e2.shape[1]
-    assert(d == 2 or d == 3)
-    if d == 2:
-        plot_2d(e1, e2)
-    elif d == 3:
-        plot_3d(e1, e2)
+# # Visualize 2d or 3d node embeddings
+# def plot_embeddings(e1, e2):
+#     n1 = e1.shape[0]
+#     n2 = e2.shape[0]
+#     if (n1 + n2 > 100):
+#         print("Warning: plotting large number (", n1+n2, ") of data points")
+#     assert(e1.shape[1] == e2.shape[1])
+#     d = e2.shape[1]
+#     assert(d == 2 or d == 3)
+#     if d == 2:
+#         plot_2d(e1, e2)
+#     elif d == 3:
+#         plot_3d(e1, e2)
 
 # Normalize using max/min values across all dimensions
 def normalize_all(e1, e2):
