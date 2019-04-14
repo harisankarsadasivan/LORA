@@ -223,6 +223,7 @@ def load_edgelist_local(edges):
   G = Graph()
   for start, end in edges:
     G[start].append(end)
+    G[end].append(start)
 
   G.make_consistent()
   return G

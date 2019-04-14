@@ -18,10 +18,7 @@ _2vec_params = {'p': 1,
 
 biovec_model_path = 'embedding/biovec/streptomyces_avermitillis.model'
 dna2vec_model_path = 'embedding/dna2vec/pretrained/dna2vec-20161219-0153-k3to8-100d-10c-29320Mbp-sliding-Xat.w2v'
-n = 7
-
-node2vec_command = 'python2 embedding/node2vec/main.py --input embed_input.txt --output embed_output.emb --dimensions '
-struc2vec_command = 'python2 embedding/struc2vec/src/main.py --input embed_input.txt --output embed_output.emb --dimensions '
+n = 8
 
 def generate_embeddings(edge_list, contigs, repeats, struct_embedding_type, content_embedding_type, dimensions=100):
     structure_embeddings = generate_structural_embeddings(edge_list, struct_embedding_type, dimensions)
@@ -29,11 +26,11 @@ def generate_embeddings(edge_list, contigs, repeats, struct_embedding_type, cont
 
     final_embeds = []
 
+
     for k,v in structure_embeddings.items():
         content_collapsed = np.concatenate((content_embeddings[k][0],content_embeddings[k][1],content_embeddings[k][2], v), axis=0)
         final_embeds.append(content_collapsed)
     return np.asarray(final_embeds)
-    # print(final_embeds.shape)
 
 def generate_structural_embeddings(edge_list, embed_type, dimensions):
     if embed_type == 'node2vec':

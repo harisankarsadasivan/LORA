@@ -1,21 +1,28 @@
 from embedding.generate_embeddings import generate_embeddings
 from phylo_tree.construct_dendrogram import get_pairwise_dist, build_dendrogram
+import argparse
 import os
 import numpy as np
 
 data_location = 'data/flye_output/'
 edge_list_location = '/20-repeat/edge_list'
 content_list_location = '/20-repeat/node_list'
-embedding_location = '/20-repeat/saved_embeddings.npy'
-distance_mat_location = 'data/distance_mat.npy'
+embedding_location = '/20-repeat/saved_embeddings_%s_%s_%d.npy'
+distance_mat_location = 'data/distance_mat_%s_%s_%d.npy'
 
 bacteria = os.listdir(data_location)
-limit = 30 #np.inf # For debugging purposes
+limit = 3 #np.inf # For debugging purposes
 genomes = []
 embeddings = []
 
+ap = argparse.ArgumentParser()
+ap.add_argument('--struct', type=str, default='node2vec', help='type of structural embedding')
+ap.add_argument('--dna', type=str, default='biovec', help='type of dna embedding')
+ap.add_argument('--dimensions', type=int, default=100, help='Number of dimensions for structural embeddings')
+args = ap.parse_args()
+
 for genome in bacteria:
-    if not os.path.isfile(data_location + genome + embedding_location):
+    if not os.path.isfile(data_location + genome + (embedding_location % (args.struct, args.dna, args.dimensions))):
         edge_list = []
         with open(data_location + genome + edge_list_location) as edges:
             line = edges.readline()
@@ -53,25 +60,25 @@ for genome in bacteria:
         genomes.append((genome, edge_list, contigs, repeats))
         print("Read files for " + genome)
     else:
-        embeddings.append((genome, np.load(data_location + genome + embedding_location)))
+        embeddings.append((genome, np.load(data_location + genome + (embedding_location % (args.struct, args.dna, args.dimensions)))))
         print("Loaded embeddings for " + genome)
 
 emb_list = []
 for genome, edges, contigs, repeats in genomes:
-    if len(genomes) >= limit:
+    if len(embeddings) >= limit:
         break
     print('Generating embeddings for ' + genome)
-    emb = generate_embeddings(edges, contigs, repeats, 'node2vec', 'dna2vec')
+    emb = generate_embeddings(edges, contigs, repeats, args.struct, args.dna, args.dimensions)
     emb_list.append(emb)
     embeddings.append((genome, emb, None)) # Name, embeddings, weight vector (optional)
-    np.save(data_location + genome + embedding_location, emb)
+    np.save(data_location + genome + (embedding_location % (args.struct, args.dna, args.dimensions)), emb)
     print('Done')
     
-if not os.path.isfile(distance_mat_location):
+if not os.path.isfile(distance_mat_location % (args.struct, args.dna, args.dimensions)):
     print('Calculating all pairwise distances')
     pairwise_dist = get_pairwise_dist(emb_list, 8)
-    np.save(distance_mat_location, pairwise_dist)
+    np.save(distance_mat_location % (args.struct, args.dna, args.dimensions), pairwise_dist)
 else:
     print('Loading pairwise distances')
-    pairwise_dist = np.load(distance_mat_location)
+    pairwise_dist = np.load(distance_mat_location % (args.struct, args.dna, args.dimensions))
 print('Done')
