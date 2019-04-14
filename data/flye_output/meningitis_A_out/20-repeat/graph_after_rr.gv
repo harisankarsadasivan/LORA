@@ -1,0 +1,38 @@
+digraph {
+nodesep = 0.5;
+node [shape = circle, label = "", height = 0.3];
+"0" [style = "filled", fillcolor = "grey"];
+"1" [style = "filled", fillcolor = "grey"];
+"2" [style = "filled", fillcolor = "grey"];
+"3" [style = "filled", fillcolor = "grey"];
+"5" -> "4" [label = "id 18\l6k 40x", color = "black"] ;
+"7" -> "6" [label = "id -17\l6k 59x", color = "black"] ;
+"9" -> "8" [label = "id 17\l6k 59x", color = "black"] ;
+"11" -> "10" [label = "id 16\l6k 46x", color = "black"] ;
+"13" -> "12" [label = "id 15\l12k 56x", color = "black"] ;
+"15" -> "14" [label = "id -14\l12k 47x", color = "black"] ;
+"17" -> "16" [label = "id 13\l6k 51x", color = "black"] ;
+"19" -> "18" [label = "id -4\l31k 95x", color = "black"] ;
+"21" -> "20" [label = "id 4\l31k 95x", color = "black"] ;
+"23" -> "22" [label = "id -9\l254k 45x", color = "black"] ;
+"18" -> "24" [label = "id -3\l509k 53x", color = "black"] ;
+"26" -> "25" [label = "id -18\l6k 40x", color = "black"] ;
+"16" -> "21" [label = "id 3\l509k 53x", color = "black"] ;
+"3" -> "27" [label = "id 1\l129k 47x", color = "black"] ;
+"28" -> "15" [label = "id -2\l121k 50x", color = "black"] ;
+"20" -> "13" [label = "id 5\l586k 51x", color = "black"] ;
+"24" -> "28" [label = "id -13\l6k 51x", color = "black"] ;
+"6" -> "29" [label = "id -10\l199k 61x", color = "black"] ;
+"0" -> "26" [label = "id 6\l51k 22x", color = "black"] ;
+"30" -> "17" [label = "id 2\l121k 50x", color = "black"] ;
+"8" -> "5" [label = "id -8\l233k 58x", color = "black"] ;
+"29" -> "31" [label = "id -15\l12k 56x", color = "black"] ;
+"4" -> "1" [label = "id -6\l51k 22x", color = "black"] ;
+"10" -> "2" [label = "id -1\l129k 47x", color = "black"] ;
+"27" -> "23" [label = "id -16\l6k 46x", color = "black"] ;
+"25" -> "7" [label = "id 8\l233k 58x", color = "black"] ;
+"14" -> "11" [label = "id 9\l254k 45x", color = "black"] ;
+"22" -> "30" [label = "id 14\l12k 47x", color = "black"] ;
+"12" -> "9" [label = "id 10\l199k 61x", color = "black"] ;
+"31" -> "19" [label = "id -5\l586k 51x", color = "black"] ;
+}
