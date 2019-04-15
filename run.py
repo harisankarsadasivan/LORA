@@ -11,7 +11,7 @@ embedding_location = '/20-repeat/saved_embeddings_%s_%s_%d.npy'
 distance_mat_location = 'data/distance_mat_%s_%s_%d.npy'
 
 bacteria = os.listdir(data_location)
-limit = 3 #np.inf # For debugging purposes
+limit = np.inf # For debugging purposes
 genomes = []
 embeddings = []
 
