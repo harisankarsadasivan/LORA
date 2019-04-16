@@ -158,8 +158,8 @@ def pyramid_match_sim(e1, e2, L, regularize=False, vectorized=True, dim_weightin
 
     # Option to regularize s.t. score is in interval (0,1]
     # NOTE: sim will never be zero (unless empty graph) b/c first level is entire hypercube
-    if regularize:
-        sim /= (n_nodes1 + n_nodes2)
+    # if regularize:
+        # sim /= (n_nodes1 + n_nodes2)
 
     return sim
 

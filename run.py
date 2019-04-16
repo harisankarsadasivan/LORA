@@ -1,5 +1,6 @@
 from embedding.generate_embeddings import generate_embeddings
 from phylo_tree.construct_dendrogram import get_pairwise_dist, build_dendrogram
+from phylo_tree.dist_matrix import coph_corr
 import argparse
 import os
 import numpy as np
@@ -65,18 +66,29 @@ for genome in bacteria:
         print("Loaded embeddings for " + genome)
 
 # Generate embeddings that aren't already saved
-emb_list = []
 for genome, edges, contigs, repeats in genomes:
     if len(embeddings) >= limit:
         break
     print('Generating embeddings for ' + genome)
     emb = generate_embeddings(edges, contigs, repeats, args.struct, args.dna, args.dimensions)
-    emb_list.append(emb)
     embeddings.append((genome, emb, None)) # Name, embeddings, weight vector (optional)
     np.save(data_location + genome + (embedding_location % (args.struct, args.dna, args.dimensions)), emb)
     print('Done')
     
+# Calculate all pairwise distances using PMK
 print('Calculating all pairwise distances')
+emb_list = [embeddings[i][1] for i in range(len(embeddings))]
 pairwise_dist = get_pairwise_dist(emb_list, 8)
 np.save(distance_mat_location % (args.struct, args.dna, args.dimensions), pairwise_dist)
 print('Done calculating pairwise distances')
+
+# Build Dendrogram
+dendr = build_dendrogram(pairwise_dist, 'single')
+
+# Compute cophenetic correlation with ground truth
+genome_list = [embeddings[i][0] for i in range(len(embeddings))]
+ind2bac = {}
+for i in range(len(genome_list)):
+    ind2bac[i] = genome_list[i]
+corr = coph_corr(dendr, ind2bac)
+print("\nCophenetic Correlation: " + str(corr))
