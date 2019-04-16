@@ -1,5 +1,6 @@
 *.emb
 *.pyc
+*.png
 random_walks.txt
 struc2vec/pickles/*.*
 .idea
