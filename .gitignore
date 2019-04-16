@@ -9,3 +9,4 @@ struc2vec/pickles/*.*
 repeat_graph_dump
 __pycache__
 virtual_env/*
+nohup.out

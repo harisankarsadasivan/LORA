@@ -1,2 +1,0 @@
-#Distance matrix is symmetric with same row and column order as follows
-#Enterococcus Faecalis,Streptococcus Pneumonia,Listeria Monocytogenes,Bacillus subtilis,Mycobacterium bovis,Mycobacterium tuberculosis,Mycobacterium paratuberculosis,Streptomyces avermitilis,Pseudomonas Aeruginosa, Escherichia Coli,Salmonella Enterica,Salmonella Typhi,Neissieria Meningitis A,Bordetella Pertussis,Chromobacterium violaceum,Nitrosomonas sicca,Helicobacter pylori,Helicobacter hepaticus,Wolinella succinogenus,Campylobacter jejuni

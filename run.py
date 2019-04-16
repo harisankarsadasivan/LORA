@@ -1,5 +1,6 @@
 from embedding.generate_embeddings import generate_embeddings
 from phylo_tree.construct_dendrogram import get_pairwise_dist, build_dendrogram
+from phylo_tree.dist_matrix import coph_corr
 import argparse
 import os
 import numpy as np
@@ -11,7 +12,7 @@ embedding_location = '/20-repeat/saved_embeddings_%s_%s_%d.npy'
 distance_mat_location = 'data/distance_mat_%s_%s_%d.npy'
 
 bacteria = os.listdir(data_location)
-limit = 3 #np.inf # For debugging purposes
+limit = np.inf # For debugging purposes
 genomes = []
 embeddings = []
 
@@ -21,6 +22,7 @@ ap.add_argument('--dna', type=str, default='biovec', help='type of dna embedding
 ap.add_argument('--dimensions', type=int, default=100, help='Number of dimensions for structural embeddings')
 args = ap.parse_args()
 
+# Load flye_outputs and available embeddings
 for genome in bacteria:
     if not os.path.isfile(data_location + genome + (embedding_location % (args.struct, args.dna, args.dimensions))):
         edge_list = []
@@ -63,22 +65,30 @@ for genome in bacteria:
         embeddings.append((genome, np.load(data_location + genome + (embedding_location % (args.struct, args.dna, args.dimensions)))))
         print("Loaded embeddings for " + genome)
 
-emb_list = []
+# Generate embeddings that aren't already saved
 for genome, edges, contigs, repeats in genomes:
     if len(embeddings) >= limit:
         break
     print('Generating embeddings for ' + genome)
     emb = generate_embeddings(edges, contigs, repeats, args.struct, args.dna, args.dimensions)
-    emb_list.append(emb)
     embeddings.append((genome, emb, None)) # Name, embeddings, weight vector (optional)
     np.save(data_location + genome + (embedding_location % (args.struct, args.dna, args.dimensions)), emb)
     print('Done')
     
-if not os.path.isfile(distance_mat_location % (args.struct, args.dna, args.dimensions)):
-    print('Calculating all pairwise distances')
-    pairwise_dist = get_pairwise_dist(emb_list, 8)
-    np.save(distance_mat_location % (args.struct, args.dna, args.dimensions), pairwise_dist)
-else:
-    print('Loading pairwise distances')
-    pairwise_dist = np.load(distance_mat_location % (args.struct, args.dna, args.dimensions))
-print('Done')
+# Calculate all pairwise distances using PMK
+print('Calculating all pairwise distances')
+emb_list = [embeddings[i][1] for i in range(len(embeddings))]
+pairwise_dist = get_pairwise_dist(emb_list, 8)
+np.save(distance_mat_location % (args.struct, args.dna, args.dimensions), pairwise_dist)
+print('Done calculating pairwise distances')
+
+# Build Dendrogram
+dendr = build_dendrogram(pairwise_dist, 'single')
+
+# Compute cophenetic correlation with ground truth
+genome_list = [embeddings[i][0] for i in range(len(embeddings))]
+ind2bac = {}
+for i in range(len(genome_list)):
+    ind2bac[i] = genome_list[i]
+corr = coph_corr(dendr, ind2bac)
+print("\nCophenetic Correlation: " + str(corr))

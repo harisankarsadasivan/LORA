@@ -31,6 +31,10 @@ def get_pairwise_sim(embeddings, L, regularize=False, condensed=False):
         for i in range(n):
             for j in range(n):
                 out[i, j] = pyramid_match_sim(embeddings[i], embeddings[j], L, regularize=regularize)
+    
+    if regularize:
+        out /= np.max(out)
+        
     return out
 
 # Get pairwise distances for each pair of embeddings in input list 'embeddings'. Read get_pairwise_sim()
@@ -47,27 +51,6 @@ def get_pairwise_dist(embeddings, L, regularize=True, condensed=True):
 # Linkage is a string specifying the linkage method (e.g. single, complete, average, centroid, etc.)
 def build_dendrogram(pairwise_dist, linkage):
     return hier.linkage(pairwise_dist, method=linkage, metric=None)
-
-# Compute the cophenetic correlation between constructed dendrogram and ground truth
-# NOTE: cophenetic corr is just the pearson correlation coefficient of the constructed dendrogrammatic
-# distances with the ground truth dendrogrammatic distances
-def coph_corr(constructed_dend, ground_truth_dict):
-    n = constructed_dend.get_count() # number of original elements
-
-    # Get condensed vector form of dendro dists for constructed dendro
-    constructed_dists = np.zeros(int(n*(n-1)/2)) # n choose 2 indices
-    for i in range(n):
-        for j in range(i+1, n):
-            constructed_dists[square_to_condensed(i, j, n)] = chihyus_dist_fn(i, j, constructed_dend)
-
-    # Get condensed vector form of dendro dists for ground truth dendro
-    gt_dists = np.zeros(int(n*(n-1)/2)) # n choose 2 indices
-    for i in range(n):
-        for j in range(i+1, n):
-            gt_dists[square_to_condensed(i, j, n)] = ground_truth_dict[(i, j)]
-
-    return np.corrcoef(constructed_dists, gt_dists)[0,1]
-
 
 # Test case to create and visualize dendrogram
 def test_dendrogram():
