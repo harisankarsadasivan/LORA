@@ -1,9 +1,13 @@
 from embedding.generate_embeddings import generate_embeddings
 from phylo_tree.construct_dendrogram import get_pairwise_dist, build_dendrogram
 from phylo_tree.dist_matrix import coph_corr
+import scipy.cluster.hierarchy as hier
 import argparse
 import os
 import numpy as np
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 
 data_location = 'data/flye_output/'
 edge_list_location = '/20-repeat/edge_list'
@@ -63,7 +67,7 @@ for genome in bacteria:
         print("Read files for " + genome)
     else:
         embeddings.append((genome, np.load(data_location + genome + (embedding_location % (args.struct, args.dna, args.dimensions)))))
-        print("Loaded embeddings for " + genome)
+        # print("Loaded embeddings for " + genome)
 
 # Generate embeddings that aren't already saved
 for genome, edges, contigs, repeats in genomes:
@@ -78,17 +82,18 @@ for genome, edges, contigs, repeats in genomes:
 # Calculate all pairwise distances using PMK
 print('Calculating all pairwise distances')
 emb_list = [embeddings[i][1] for i in range(len(embeddings))]
+genome_list = [embeddings[i][0] for i in range(len(embeddings))]
 pairwise_dist = get_pairwise_dist(emb_list, 8)
 np.save(distance_mat_location % (args.struct, args.dna, args.dimensions), pairwise_dist)
 print('Done calculating pairwise distances')
 
-# Build Dendrogram
-dendr = build_dendrogram(pairwise_dist, 'single')
+# Build Dendrogram and save plot
+dendr = build_dendrogram(pairwise_dist, 'ward')
+plt.figure()
+dn = hier.dendrogram(dendr, orientation='right', labels=genome_list)
+plt.title('Ward Linkage')
+plt.savefig('dendr.png', bbox_inches='tight')
 
 # Compute cophenetic correlation with ground truth
-genome_list = [embeddings[i][0] for i in range(len(embeddings))]
-ind2bac = {}
-for i in range(len(genome_list)):
-    ind2bac[i] = genome_list[i]
-corr = coph_corr(dendr, ind2bac)
-print("\nCophenetic Correlation: " + str(corr))
+corr = coph_corr(dendr, genome_list)
+print("\tCophenetic Correlation: " + str(corr) + "\n")
