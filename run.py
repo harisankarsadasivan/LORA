@@ -21,6 +21,7 @@ ap.add_argument('--dna', type=str, default='biovec', help='type of dna embedding
 ap.add_argument('--dimensions', type=int, default=100, help='Number of dimensions for structural embeddings')
 args = ap.parse_args()
 
+# Load flye_outputs and available embeddings
 for genome in bacteria:
     if not os.path.isfile(data_location + genome + (embedding_location % (args.struct, args.dna, args.dimensions))):
         edge_list = []
@@ -63,6 +64,7 @@ for genome in bacteria:
         embeddings.append((genome, np.load(data_location + genome + (embedding_location % (args.struct, args.dna, args.dimensions)))))
         print("Loaded embeddings for " + genome)
 
+# Generate embeddings that aren't already saved
 emb_list = []
 for genome, edges, contigs, repeats in genomes:
     if len(embeddings) >= limit:
@@ -74,11 +76,7 @@ for genome, edges, contigs, repeats in genomes:
     np.save(data_location + genome + (embedding_location % (args.struct, args.dna, args.dimensions)), emb)
     print('Done')
     
-if not os.path.isfile(distance_mat_location % (args.struct, args.dna, args.dimensions)):
-    print('Calculating all pairwise distances')
-    pairwise_dist = get_pairwise_dist(emb_list, 8)
-    np.save(distance_mat_location % (args.struct, args.dna, args.dimensions), pairwise_dist)
-else:
-    print('Loading pairwise distances')
-    pairwise_dist = np.load(distance_mat_location % (args.struct, args.dna, args.dimensions))
-print('Done')
+print('Calculating all pairwise distances')
+pairwise_dist = get_pairwise_dist(emb_list, 8)
+np.save(distance_mat_location % (args.struct, args.dna, args.dimensions), pairwise_dist)
+print('Done calculating pairwise distances')
