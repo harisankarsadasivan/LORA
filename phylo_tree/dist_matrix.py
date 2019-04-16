@@ -16,8 +16,9 @@ def dist_matrix(link):
 
 	tree_dist = np.zeros(shape=(n, n))
 	for i in range(n):
-		for j in range(n):
+		for j in range(i+1, n):
 			tree_dist[i, j] = calc_node_dist(rootnode, i, j)
+			tree_dist[j, i] = tree_dist[i, j]
 
 	return tree_dist
 
