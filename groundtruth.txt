@@ -1,2 +1,41 @@
 #Distance matrix is symmetric with same row and column order as follows
 #Enterococcus Faecalis,Streptococcus Pneumonia,Listeria Monocytogenes,Bacillus subtilis,Mycobacterium bovis,Mycobacterium tuberculosis,Mycobacterium paratuberculosis,Streptomyces avermitilis,Pseudomonas Aeruginosa, Escherichia Coli,Salmonella Enterica,Salmonella Typhi,Neissieria Meningitis A,Bordetella Pertussis,Chromobacterium violaceum,Nitrosomonas sicca,Helicobacter pylori,Helicobacter hepaticus,Wolinella succinogenus,Campylobacter jejuni
+dict_names = {'faecalis' : {'faecalis':'','pneumonia':'bob', 'monocytogenes':'lawn', 'subtilis':'man', 'bovis':'','tuberculosis':'','paratuberculosis':'','avermitilis':'','aeruginosa':'','coli':'','enterica:'','typhi':'','meningitidis':'','pertussis':'','violaceum':'','sicca':'',pylori':'','hepaticus':'','succinogenus':'','jejuni':''}, 
+
+'pneumonia' : {'faecalis':'','pneumonia':'bob', 'monocytogenes':'lawn', 'subtilis':'man', 'bovis':'','tuberculosis':'','paratuberculosis':'','avermitilis':'','aeruginosa':'','coli':'','enterica:'','typhi':'','meningitidis':'','pertussis':'','violaceum':'','sicca':'',pylori':'','hepaticus':'','succinogenus':'','jejuni':''},
+
+'monocytogenes' : {'faecalis':'','pneumonia':'bob', 'monocytogenes':'lawn', 'subtilis':'man', 'bovis':'','tuberculosis':'','paratuberculosis':'','avermitilis':'','aeruginosa':'','coli':'','enterica:'','typhi':'','meningitidis':'','pertussis':'','violaceum':'','sicca':'',pylori':'','hepaticus':'','succinogenus':'','jejuni':''},
+
+'subtilis' : {'faecalis':'','pneumonia':'bob', 'monocytogenes':'lawn', 'subtilis':'man', 'bovis':'','tuberculosis':'','paratuberculosis':'','avermitilis':'','aeruginosa':'','coli':'','enterica:'','typhi':'','meningitidis':'','pertussis':'','violaceum':'','sicca':'',pylori':'','hepaticus':'','succinogenus':'','jejuni':''},
+
+'bovis' : {'faecalis':'','pneumonia':'bob', 'monocytogenes':'lawn', 'subtilis':'man', 'bovis':'','tuberculosis':'','paratuberculosis':'','avermitilis':'','aeruginosa':'','coli':'','enterica:'','typhi':'','meningitidis':'','pertussis':'','violaceum':'','sicca':'',pylori':'','hepaticus':'','succinogenus':'','jejuni':''},
+
+'tuberculosis' : {'faecalis':'','pneumonia':'bob', 'monocytogenes':'lawn', 'subtilis':'man', 'bovis':'','tuberculosis':'','paratuberculosis':'','avermitilis':'','aeruginosa':'','coli':'','enterica:'','typhi':'','meningitidis':'','pertussis':'','violaceum':'','sicca':'',pylori':'','hepaticus':'','succinogenus':'','jejuni':''},
+
+'paratuberculosis' : {'faecalis':'','pneumonia':'bob', 'monocytogenes':'lawn', 'subtilis':'man', 'bovis':'','tuberculosis':'','paratuberculosis':'','avermitilis':'','aeruginosa':'','coli':'','enterica:'','typhi':'','meningitidis':'','pertussis':'','violaceum':'','sicca':'',pylori':'','hepaticus':'','succinogenus':'','jejuni':''},
+
+'avermitilis' : {'faecalis':'','pneumonia':'bob', 'monocytogenes':'lawn', 'subtilis':'man', 'bovis':'','tuberculosis':'','paratuberculosis':'','avermitilis':'','aeruginosa':'','coli':'','enterica:'','typhi':'','meningitidis':'','pertussis':'','violaceum':'','sicca':'',pylori':'','hepaticus':'','succinogenus':'','jejuni':''},
+
+'aeruginosa' : {'faecalis':'','pneumonia':'bob', 'monocytogenes':'lawn', 'subtilis':'man', 'bovis':'','tuberculosis':'','paratuberculosis':'','avermitilis':'','aeruginosa':'','coli':'','enterica:'','typhi':'','meningitidis':'','pertussis':'','violaceum':'','sicca':'',pylori':'','hepaticus':'','succinogenus':'','jejuni':''},
+
+'coli' : {'faecalis':'','pneumonia':'bob', 'monocytogenes':'lawn', 'subtilis':'man', 'bovis':'','tuberculosis':'','paratuberculosis':'','avermitilis':'','aeruginosa':'','coli':'','enterica:'','typhi':'','meningitidis':'','pertussis':'','violaceum':'','sicca':'',pylori':'','hepaticus':'','succinogenus':'','jejuni':''},
+
+'entercica' : {'faecalis':'','pneumonia':'bob', 'monocytogenes':'lawn', 'subtilis':'man', 'bovis':'','tuberculosis':'','paratuberculosis':'','avermitilis':'','aeruginosa':'','coli':'','enterica:'','typhi':'','meningitidis':'','pertussis':'','violaceum':'','sicca':'',pylori':'','hepaticus':'','succinogenus':'','jejuni':''},
+
+'typhi' : {'faecalis':'','pneumonia':'bob', 'monocytogenes':'lawn', 'subtilis':'man', 'bovis':'','tuberculosis':'','paratuberculosis':'','avermitilis':'','aeruginosa':'','coli':'','enterica:'','typhi':'','meningitidis':'','pertussis':'','violaceum':'','sicca':'',pylori':'','hepaticus':'','succinogenus':'','jejuni':''},
+
+'meningitidis' : {'faecalis':'','pneumonia':'bob', 'monocytogenes':'lawn', 'subtilis':'man', 'bovis':'','tuberculosis':'','paratuberculosis':'','avermitilis':'','aeruginosa':'','coli':'','enterica:'','typhi':'','meningitidis':'','pertussis':'','violaceum':'','sicca':'',pylori':'','hepaticus':'','succinogenus':'','jejuni':''},
+
+'pertussis' : {'faecalis':'','pneumonia':'bob', 'monocytogenes':'lawn', 'subtilis':'man', 'bovis':'','tuberculosis':'','paratuberculosis':'','avermitilis':'','aeruginosa':'','coli':'','enterica:'','typhi':'','meningitidis':'','pertussis':'','violaceum':'','sicca':'',pylori':'','hepaticus':'','succinogenus':'','jejuni':''},
+
+'violaceum' : {'faecalis':'','pneumonia':'bob', 'monocytogenes':'lawn', 'subtilis':'man', 'bovis':'','tuberculosis':'','paratuberculosis':'','avermitilis':'','aeruginosa':'','coli':'','enterica:'','typhi':'','meningitidis':'','pertussis':'','violaceum':'','sicca':'',pylori':'','hepaticus':'','succinogenus':'','jejuni':''},
+
+'sicca' : {'faecalis':'','pneumonia':'bob', 'monocytogenes':'lawn', 'subtilis':'man', 'bovis':'','tuberculosis':'','paratuberculosis':'','avermitilis':'','aeruginosa':'','coli':'','enterica:'','typhi':'','meningitidis':'','pertussis':'','violaceum':'','sicca':'',pylori':'','hepaticus':'','succinogenus':'','jejuni':''},
+
+'pylori' : {'faecalis':'','pneumonia':'bob', 'monocytogenes':'lawn', 'subtilis':'man', 'bovis':'','tuberculosis':'','paratuberculosis':'','avermitilis':'','aeruginosa':'','coli':'','enterica:'','typhi':'','meningitidis':'','pertussis':'','violaceum':'','sicca':'',pylori':'','hepaticus':'','succinogenus':'','jejuni':''},
+
+'hepaticus' : {'faecalis':'','pneumonia':'bob', 'monocytogenes':'lawn', 'subtilis':'man', 'bovis':'','tuberculosis':'','paratuberculosis':'','avermitilis':'','aeruginosa':'','coli':'','enterica:'','typhi':'','meningitidis':'','pertussis':'','violaceum':'','sicca':'',pylori':'','hepaticus':'','succinogenus':'','jejuni':''},
+
+'succinogenus' : {'faecalis':'','pneumonia':'bob', 'monocytogenes':'lawn', 'subtilis':'man', 'bovis':'','tuberculosis':'','paratuberculosis':'','avermitilis':'','aeruginosa':'','coli':'','enterica:'','typhi':'','meningitidis':'','pertussis':'','violaceum':'','sicca':'',pylori':'','hepaticus':'','succinogenus':'','jejuni':''},
+
+'jejuni' : {'faecalis':'','pneumonia':'bob', 'monocytogenes':'lawn', 'subtilis':'man', 'bovis':'','tuberculosis':'','paratuberculosis':'','avermitilis':'','aeruginosa':'','coli':'','enterica:'','typhi':'','meningitidis':'','pertussis':'','violaceum':'','sicca':'',pylori':'','hepaticus':'','succinogenus':'','jejuni':''}} 
