@@ -27,6 +27,7 @@ def coph_corr(constructed_dend, ind2bac):
     return np.corrcoef(constructed_dists, gt_dists)[0,1]
 
 def get_gt():
+        
 	gt = {
     	'faecalis' : {'faecalis':0,'pneumonia':1, 'monocytogenes':3, 'subtilis':3, 'bovis':6,'tuberculosis':6,'paratuberculosis':6,'avermitilis':5,'aeruginosa':6,'ecoli':6,'enterica':7,'typhi':7,'meningitis':8,'pertussis':8,'violaceum':7,'sicca':6,'pylori':8,'hepaticus':8,'succinogenus':7,'jejuni':6},
     	'pneumonia' : {'faecalis':1,'pneumonia':0, 'monocytogenes':3, 'subtilis':3, 'bovis':6,'tuberculosis':6,'paratuberculosis':6,'avermitilis':5,'aeruginosa':6,'ecoli':6,'enterica':7,'typhi':7,'meningitis':8,'pertussis':8,'violaceum':7,'sicca':6,'pylori':8,'hepaticus':8,'succinogenus':7,'jejuni':6},    
