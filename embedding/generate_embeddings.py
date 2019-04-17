@@ -17,12 +17,11 @@ _2vec_params = {'p': 1,
                    'iter': 1}
 
 biovec_model_path = 'embedding/biovec/streptomyces_avermitillis.model'
-dna2vec_model_path = 'embedding/dna2vec/pretrained/dna2vec-20161219-0153-k3to8-100d-10c-29320Mbp-sliding-Xat.w2v'
-n = 8
+dna2vec_model_path = 'embedding/dna2vec/pretrained/dna2vec-20190417-0203-k4to8-100d-10c-90Mbp-sliding-lfP.w2v'
 
-def generate_embeddings(edge_list, contigs, repeats, struct_embedding_type, content_embedding_type, dimensions=100):
+def generate_embeddings(edge_list, contigs, repeats, struct_embedding_type, content_embedding_type, dimensions=100, n=5):
     structure_embeddings = generate_structural_embeddings(edge_list, struct_embedding_type, dimensions)
-    content_embeddings = generate_content_embeddings(contigs, content_embedding_type, repeats)
+    content_embeddings = generate_content_embeddings(contigs, content_embedding_type, repeats, n)
 
     final_embeds = []
 
@@ -70,7 +69,7 @@ def generate_structural_embeddings(edge_list, embed_type, dimensions):
     return structure
 
 
-def generate_content_embeddings(contigs, embed_type, repeats):
+def generate_content_embeddings(contigs, embed_type, repeats, n):
     if embed_type == 'biovec':
         biovec = models.load_protvec(biovec_model_path)
         content = {}
@@ -84,10 +83,10 @@ def generate_content_embeddings(contigs, embed_type, repeats):
             if len(contig) < n:
                 content[node] = mk_model.vector(contig) * repeats[node]
             else:
-                content[node] = to_vecs(contig, mk_model) * repeats[node]
+                content[node] = to_vecs(contig, mk_model, n) * repeats[node]
         return content
 
-def split_to_kmers(seq):
+def split_to_kmers(seq, n):
     a, b, c = zip(*[iter(seq)] * n), zip(*[iter(seq[1:])] * n), zip(*[iter(seq[2:])] * n)
     str_ngrams = []
     for ngrams in [a, b, c]:
@@ -97,8 +96,8 @@ def split_to_kmers(seq):
         str_ngrams.append(x)
     return str_ngrams
 
-def to_vecs(seq, mk_model):
-    ngram_patterns = split_to_kmers(seq)
+def to_vecs(seq, mk_model, n):
+    ngram_patterns = split_to_kmers(seq, n)
 
     protvecs = []
     for ngrams in ngram_patterns:

@@ -24,6 +24,7 @@ ap = argparse.ArgumentParser()
 ap.add_argument('--struct', type=str, default='node2vec', help='type of structural embedding')
 ap.add_argument('--dna', type=str, default='biovec', help='type of dna embedding')
 ap.add_argument('--dimensions', type=int, default=100, help='Number of dimensions for structural embeddings')
+ap.add_argument('--n', type=int, default=4, help='Number for Nmers')
 args = ap.parse_args()
 
 # Load flye_outputs and available embeddings
@@ -74,7 +75,7 @@ for genome, edges, contigs, repeats in genomes:
     if len(embeddings) >= limit:
         break
     print('Generating embeddings for ' + genome)
-    emb = generate_embeddings(edges, contigs, repeats, args.struct, args.dna, args.dimensions)
+    emb = generate_embeddings(edges, contigs, repeats, args.struct, args.dna, args.dimensions, args.n)
     embeddings.append((genome, emb, None)) # Name, embeddings, weight vector (optional)
     np.save(data_location + genome + (embedding_location % (args.struct, args.dna, args.dimensions)), emb)
     print('Done')
