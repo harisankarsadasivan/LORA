@@ -1,6 +1,9 @@
 import numpy as np
 import scipy.cluster.hierarchy as hier
 from construct_dendrogram import square_to_condensed
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 
 # Compute the cophenetic correlation between constructed dendrogram and ground truth
 # NOTE: cophenetic corr is just the pearson correlation coefficient of the constructed dendrogrammatic
@@ -24,7 +27,15 @@ def coph_corr(constructed_dend, ind2bac):
             bac2 = ind2bac[j]
             gt_dists[square_to_condensed(i, j, n)] = ground_truth_dict[bac1][bac2]
 
-    return np.corrcoef(constructed_dists, gt_dists)[0,1]
+    corr = np.corrcoef(constructed_dists, gt_dists)[0,1]
+    plt.figure()
+    plt.hist2d(gt_dists, constructed_dists, (8,12), cmap=plt.cm.jet)
+    plt.colorbar()
+    plt.xlabel('Ground Truth Distance')
+    plt.ylabel('Constructed Distance')
+    plt.title('Cophenetic Correlation = ' + str(corr)[:5])
+    plt.savefig('corr.png', bbox_inches='tight')
+    return corr
 
 def get_gt():
         

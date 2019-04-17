@@ -89,8 +89,17 @@ vec_dim = 100 # NOTE: might need to change for different embeddings
 content_len = 3*vec_dim
 struct_len = args.dimensions
 weight_vec = np.ones(struct_len + content_len)
-weight_vec[:struct_len] *= 5*content_len
-weight_vec[struct_len:] *= struct_len
+weight_vec[:struct_len] *= 5*content_len # Structural dimensions
+weight_vec[struct_len:] *= struct_len # Content dimensions
+
+# Only content embeddings
+# weight_vec = weight_vec[struct_len:]
+# emb_list = [embeddings[i][1][:, struct_len:] for i in range(len(embeddings))]
+
+# Only structural embeddings
+# weight_vec = weight_vec[:struct_len]
+# emb_list = [embeddings[i][1][:, :struct_len] for i in range(len(embeddings))]
+
 weight_vec = weight_vec/sum(weight_vec)
 pairwise_dist = get_pairwise_dist(emb_list, 4, dim_weighting=weight_vec)
 np.save(distance_mat_location % (args.struct, args.dna, args.dimensions), pairwise_dist)
