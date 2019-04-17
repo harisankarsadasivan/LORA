@@ -18,19 +18,19 @@ def square_to_condensed(i, j, n):
 # Not Condensed: output full 2d matrix of similarities, sim(x,x)=1 IFF regularize is set to true.
 # NOTE: Careful condensed default parameters.  Condensed representation via squareform in scipy is technically for distances
 # and excludes diagonals assuming they are 0 (i.e. dist(x,x)=0).  If using condensed form, must know to check diagonals accordingly.
-def get_pairwise_sim(embeddings, L, regularize=False, condensed=False):
+def get_pairwise_sim(embeddings, L, regularize=False, condensed=False, dim_weighting=None):
     n = len(embeddings)
     if condensed: # Upper triangular representation flattened into vector
         out = np.zeros(int(n*(n-1)/2)) # n choose 2 indices
         for i in range(n):
             for j in range(i+1, n):
-                out[square_to_condensed(i, j, n)] = pyramid_match_sim(embeddings[i], embeddings[j], L, regularize=regularize)
+                out[square_to_condensed(i, j, n)] = pyramid_match_sim(embeddings[i], embeddings[j], L, regularize=regularize, dim_weighting=dim_weighting)
 
     else: # Full nxn matrix representation
         out = np.zeros((n, n))
         for i in range(n):
             for j in range(n):
-                out[i, j] = pyramid_match_sim(embeddings[i], embeddings[j], L, regularize=regularize)
+                out[i, j] = pyramid_match_sim(embeddings[i], embeddings[j], L, regularize=regularize, dim_weighting=dim_weighting)
     
     if regularize:
         out /= np.max(out)
@@ -41,11 +41,11 @@ def get_pairwise_sim(embeddings, L, regularize=False, condensed=False):
 # If sim is in interval (0, 1] (regularized), then dist will be in interval [0, 1)
 # If sim is in interval (0, inf) (not regularized), then dist will be in interval (-inf, 0)
 # NOTE: Careful changing regularize parameter.  
-def get_pairwise_dist(embeddings, L, regularize=True, condensed=True):
+def get_pairwise_dist(embeddings, L, regularize=True, condensed=True, dim_weighting=None):
     if regularize: # Can assume sim is in range (0,1]
-        return 1 - get_pairwise_sim(embeddings, L, regularize=regularize, condensed=condensed)
+        return 1 - get_pairwise_sim(embeddings, L, regularize=regularize, condensed=condensed, dim_weighting=dim_weighting)
     else: # Sim is in range (0,inf]
-        return -1 * get_pairwise_sim(embeddings, L, regularize=regularize, condensed=condensed)
+        return -1 * get_pairwise_sim(embeddings, L, regularize=regularize, condensed=condensed, dim_weighting=dim_weighting)
 
 # Wrapper which returns linkage structure of dendrogram
 # Linkage is a string specifying the linkage method (e.g. single, complete, average, centroid, etc.)

@@ -76,15 +76,23 @@ for genome, edges, contigs, repeats in genomes:
         break
     print('Generating embeddings for ' + genome)
     emb = generate_embeddings(edges, contigs, repeats, args.struct, args.dna, args.dimensions, args.n)
-    embeddings.append((genome, emb, None)) # Name, embeddings, weight vector (optional)
+    embeddings.append((genome, emb)) # Name, embeddings
     np.save(data_location + genome + (embedding_location % (args.struct, args.dna, args.dimensions)), emb)
     print('Done')
     
+
 # Calculate all pairwise distances using PMK
 print('Calculating all pairwise distances')
 emb_list = [embeddings[i][1] for i in range(len(embeddings))]
 genome_list = [embeddings[i][0] for i in range(len(embeddings))]
-pairwise_dist = get_pairwise_dist(emb_list, 8)
+vec_dim = 100 # NOTE: might need to change for different embeddings
+content_len = 3*vec_dim
+struct_len = args.dimensions
+weight_vec = np.ones(struct_len + content_len)
+weight_vec[:struct_len] *= 5*content_len
+weight_vec[struct_len:] *= struct_len
+weight_vec = weight_vec/sum(weight_vec)
+pairwise_dist = get_pairwise_dist(emb_list, 4, dim_weighting=weight_vec)
 np.save(distance_mat_location % (args.struct, args.dna, args.dimensions), pairwise_dist)
 print('Done calculating pairwise distances')
 
