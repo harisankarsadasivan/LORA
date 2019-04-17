@@ -17,7 +17,7 @@ _2vec_params = {'p': 1,
                    'iter': 1}
 
 biovec_model_path = 'embedding/biovec/streptomyces_avermitillis.model'
-dna2vec_model_path = 'embedding/dna2vec/pretrained/dna2vec-20190417-0203-k4to8-100d-10c-90Mbp-sliding-lfP.w2v'
+dna2vec_model_path = 'embedding/dna2vec/results/dna2vec-20190417-0447-k4to8-125d-10c-90Mbp-sliding-iaT.w2v'
 
 def generate_embeddings(edge_list, contigs, repeats, struct_embedding_type, content_embedding_type, dimensions=100, n=5):
     structure_embeddings = generate_structural_embeddings(edge_list, struct_embedding_type, dimensions)

@@ -1,7 +1,7 @@
 inputs: streptomyces_avermitilis.fa
 k-low: 4
 k-high: 8
-vec-dim: 100
+vec-dim: 125
 epoch: 10
 context: 10
 out-dir: results/
