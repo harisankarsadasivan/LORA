@@ -88,10 +88,13 @@ np.save(distance_mat_location % (args.struct, args.dna, args.dimensions), pairwi
 print('Done calculating pairwise distances')
 
 # Build Dendrogram and save plot
-dendr = build_dendrogram(pairwise_dist, 'ward')
+linkage = 'ward'
+dendr = build_dendrogram(pairwise_dist, linkage)
 plt.figure()
+_, ax = plt.subplots(1)
 dn = hier.dendrogram(dendr, orientation='right', labels=genome_list)
-plt.title('Ward Linkage')
+plt.title(linkage + ' linkage')
+ax.set_xlim(xmin=-0.025)
 plt.savefig('dendr.png', bbox_inches='tight')
 
 # Compute cophenetic correlation with ground truth
