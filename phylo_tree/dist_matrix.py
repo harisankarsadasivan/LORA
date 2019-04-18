@@ -1,5 +1,6 @@
 import numpy as np
 import scipy.cluster.hierarchy as hier
+import scipy.stats as stats
 from construct_dendrogram import square_to_condensed
 import matplotlib
 matplotlib.use('Agg')
@@ -36,6 +37,27 @@ def coph_corr(constructed_dend, ind2bac):
     plt.title('Cophenetic Correlation = ' + str(corr)[:5])
     plt.savefig('corr.png', bbox_inches='tight')
     return corr
+
+def rank_corr(constructed_dend, ind2bac):
+    n = len(ind2bac)
+    constructed_dist_mat = dist_matrix(constructed_dend)
+    ground_truth_dict = get_gt()
+
+    # Get condensed vector form of dendro dists for constructed dendro
+    constructed_dists = np.zeros(int(n*(n-1)/2)) # n choose 2 indices
+    for i in range(n):
+        for j in range(i+1, n):
+            constructed_dists[square_to_condensed(i, j, n)] = constructed_dist_mat[i, j]
+
+    # Get condensed vector form of dendro dists for ground truth dendro
+    gt_dists = np.zeros(int(n*(n-1)/2)) # n choose 2 indices
+    for i in range(n):
+        bac1 = ind2bac[i]
+        for j in range(i+1, n):
+            bac2 = ind2bac[j]
+            gt_dists[square_to_condensed(i, j, n)] = ground_truth_dict[bac1][bac2]
+
+    return stats.spearmanr(constructed_dists, gt_dists)[0]
 
 def get_gt():
         

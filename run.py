@@ -1,6 +1,6 @@
 from embedding.generate_embeddings import generate_embeddings
 from phylo_tree.construct_dendrogram import get_pairwise_dist, build_dendrogram
-from phylo_tree.dist_matrix import coph_corr
+from phylo_tree.dist_matrix import coph_corr, rank_corr
 import scipy.cluster.hierarchy as hier
 import argparse
 import os
@@ -116,5 +116,7 @@ ax.set_xlim(xmin=-0.025)
 plt.savefig('dendr.png', bbox_inches='tight')
 
 # Compute cophenetic correlation with ground truth
-corr = coph_corr(dendr, genome_list)
-print("\tCophenetic Correlation: " + str(corr) + "\n")
+c_corr = coph_corr(dendr, genome_list)
+print("\tCophenetic Correlation: " + str(c_corr))
+r_corr = rank_corr(dendr, genome_list)
+print("\tRank Correlation: " + str(r_corr) + "\n")
