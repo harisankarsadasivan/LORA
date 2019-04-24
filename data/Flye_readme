@@ -1,0 +1,3 @@
+clone this and install dependencies https://github.com/fenderglass/Flye.
+
+need to configure Flye to stop at generating repeat graphs. we can skip polishing and final steps.
