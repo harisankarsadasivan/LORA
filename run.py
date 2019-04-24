@@ -92,11 +92,11 @@ weight_vec = np.ones(struct_len + content_len)
 weight_vec[:struct_len] *= 5*content_len # Structural dimensions
 weight_vec[struct_len:] *= struct_len # Content dimensions
 
-# Only content embeddings
+# Ablation Study: Only content embeddings
 # weight_vec = weight_vec[struct_len:]
 # emb_list = [embeddings[i][1][:, struct_len:] for i in range(len(embeddings))]
 
-# Only structural embeddings
+# Ablation Study: Only structural embeddings
 # weight_vec = weight_vec[:struct_len]
 # emb_list = [embeddings[i][1][:, :struct_len] for i in range(len(embeddings))]
 

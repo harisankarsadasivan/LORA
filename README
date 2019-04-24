@@ -1,5 +1,15 @@
-Download your own local copy of datasets
-Dataset download link for ecoli:
-wget https://zenodo.org/record/1172816/files/Loman_E.coli_MAP006-1_2D_50x.fasta
-Reference genome download link:
-wget ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/005/845/GCF_000005845.2_ASM584v2/GCF_000005845.2_ASM584v2_genomic.fna.gz
+To get a sinlge instance of a phylogenetic tree: 'python2 run.py <args>'
+    - This will print the correlation coefficient to the terminal and save a .png
+    file of the dendrogram.
+To generate all combinations of embeddings for a given dimensionality d: './run_all.sh d'
+    - This will print all correlation coefficients to the terminal
+
+Note: run.py will first check if the embeddings are saved in the data directory.  If they are not present,
+they will be generated which can take several hours, depending on the parameters.  If the embeddings are present,
+all pairwise distances are calculated for the loaded embeddings and the dendrogram is constructed, which takes on
+the order of seconds.
+
+If you intend to load embeddings from memory, convenience scripts are provided to create and load a virtual
+environment on flux.  Running create_virtual_env.sh, then load_virtual_env.sh, then install_dependencies.sh
+should satisfy all prerequisites to run the main script (we are fairly confident that we have caught all
+dependencies, but additional installs may be required).
