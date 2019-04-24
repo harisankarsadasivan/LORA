@@ -13,3 +13,7 @@ If you intend to load embeddings from memory, convenience scripts are provided t
 environment on flux.  Running create_virtual_env.sh, then load_virtual_env.sh, then install_dependencies.sh
 should satisfy all prerequisites to run the main script (we are fairly confident that we have caught all
 dependencies, but additional installs may be required).
+
+
+For input data generation, use bbmap (https://github.com/BioInfoTools/BBMap) and Flye (https://github.com/fenderglass/Flye). Flye needs to be tweaked 
+to skip the polishing and final steps to just produce repeat graphs.
